@@ -11,7 +11,6 @@ The goal will be to test
 ## Running the Project
 
 **Setup an environment**
-
 ```bash
 python -m venv venv 
 ./venv/bin/activate
