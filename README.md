@@ -12,7 +12,7 @@ The goal will be to test
 
 **Setup an environment**
 ```bash
-python -m venv venv 
+python3 -m venv venv 
 ./venv/bin/activate
 pip install -r requirements.txt
 ```
