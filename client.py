@@ -1,8 +1,8 @@
 import logging
 from dataclasses import dataclass
+from typing import Optional
 
 import requests
-from typing import Optional
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -10,14 +10,13 @@ logger = logging.getLogger(__name__)
 
 @dataclass
 class TodoRecord:
-    def __init__(self, content: str, is_complete: bool):
-        self.content = content
-        self.is_complete = is_complete
+    content: str
+    is_complete: bool
 
 
 # HTTP client for interacting with the to-do server
 class TodoClient:
-    def __init__(self, server_url: str = "http://localhost:8080"):
+    def __init__(self, server_url: str = "http://localhost:5000"):
         self.server_url = server_url
 
     # Get a to-do record by its ID
@@ -26,6 +25,7 @@ class TodoClient:
 
         if response.status_code == 200:
             json = response.json()
+            logger.info("got json: %s", json)
             return TodoRecord(
                 content=json["content"],
                 is_complete=json["is_complete"]
@@ -37,10 +37,15 @@ class TodoClient:
 
     # Create a to-do record
     def create(self, todo_record: TodoRecord) -> int:
-        response = requests.post(self.server_url, json=todo_record.dict())
+        response = requests.post(self.server_url, json={
+            "content": todo_record.content,
+            "is_complete": todo_record.is_complete,
+        })
 
         if response.status_code == 200:
-            return response.json()["id"]
+            json = response.json()
+            logger.info("got json: %s", json)
+            return json["id"]
         else:
             raise Exception(f"Unexpected status code: {response.status_code}")
 

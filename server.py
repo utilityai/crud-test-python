@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from typing import Dict
 
-from flask import Flask, request, jsonify, Response
+from flask import Flask, request, jsonify
 import logging
 
 # Logger configuration
@@ -12,10 +12,8 @@ logging.basicConfig(level=logging.INFO)
 # To-do record class
 @dataclass
 class TodoRecord:
-    def __init__(self, content: str, is_complete: bool = False):
-        self.content = content
-        self.is_complete = is_complete
-
+    content: str
+    is_complete: bool
 
 # In-memory database
 database: Dict[int, TodoRecord] = {}
@@ -26,7 +24,7 @@ app = Flask(__name__)
 
 
 # Create a new to-do
-@app.route('/todos', methods=['POST'])
+@app.route('/', methods=['POST'])
 def create_todo():
     record = TodoRecord(
         content=request.json['content'],
@@ -41,18 +39,18 @@ def create_todo():
 
 
 # Get an existing to-do by ID
-@app.route('/todos/<int:id>', methods=['GET'])
+@app.route('/<int:id>', methods=['GET'])
 def get_todo(id):
     record = database.get(id)
     if record is None:
         logger.info(f"Unable to get to-do {id} as it was not found")
         return jsonify({'error': 'not found'}), 404
-    logger.info(f"Successfully got to-do {id}")
+    logger.info(f"Successfully got to-do {id} - returning {record}")
     return jsonify(record), 200
 
 
 # Delete an existing to-do by ID
-@app.route('/todos/<int:id>', methods=['DELETE'])
+@app.route('/<int:id>', methods=['DELETE'])
 def delete_todo(id):
     if database.pop(id, None) is None:
         logger.info(f"Failed to delete to-do {id} as it was not found")
