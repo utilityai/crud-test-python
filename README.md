@@ -20,11 +20,11 @@ pip install -r requirements.txt
 **Run the server**
 
 ```bash
-./gradlew server:run
+python server.py
 ```
 
 **Run the client**
 
 ```bash
-./gradlew client:run
+python client.py
 ```
